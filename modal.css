@@ -1,0 +1,402 @@
+/* ===== Modal.css — Propracované, přístupné a výkonné styly modalu ===== */
+
+/* Kořen modalu */
+.attraction-modal {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-modal);
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  opacity: 0;
+  visibility: hidden;
+  transition: all var(--duration-slow) var(--ease-out);
+  backdrop-filter: blur(0px);
+}
+
+/* Aktivní stav (zobrazit) */
+.attraction-modal.active {
+  opacity: 1;
+  visibility: visible;
+  backdrop-filter: blur(6px);
+}
+
+/* Overlay s blur efektem */
+.modal-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(46, 46, 46, 0.75);
+  transition: all var(--duration-slow) var(--ease-out);
+}
+
+.attraction-modal.active .modal-overlay {
+  background: rgba(46, 46, 46, 0.85);
+}
+
+/* Kontejner modalu */
+.modal-container {
+  position: relative;
+  background: #ffffff;
+  color: #2E2E2E;
+  border-radius: 24px;
+  width: min(1200px, 95vw);
+  max-height: 92vh;
+  overflow: hidden;
+  box-shadow: 0 25px 60px rgba(0, 0, 0, 0.3);
+  transform: translateY(40px) scale(0.9);
+  opacity: 0;
+  will-change: transform, opacity;
+  contain: layout style paint;
+  transition: all var(--duration-slow) var(--ease-spring);
+}
+
+.attraction-modal.active .modal-container {
+  transform: translateY(0) scale(1);
+  opacity: 1;
+}
+
+/* Hlaviční zavírací tlačítko */
+.modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  background: rgba(246, 247, 248, 0.95);
+  color: var(--dark-bg, #2E2E2E);
+  font-size: 24px;
+  line-height: 1;
+  cursor: pointer;
+  z-index: 20;
+  transition: all var(--duration-normal) var(--ease-out);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  display: grid;
+  place-items: center;
+}
+
+.modal-close::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: var(--primary-green, #A4D65E);
+  transform: scale(0);
+  transition: transform var(--duration-normal) var(--ease-out);
+}
+
+.modal-close::after {
+  content: '×';
+  position: relative;
+  z-index: 1;
+  transition: color var(--duration-normal) var(--ease-out);
+}
+
+.modal-close:hover::before {
+  transform: scale(1);
+}
+
+.modal-close:hover::after {
+  color: #111;
+}
+
+.modal-close:focus {
+  outline: 3px solid var(--primary-green, #A4D65E);
+  outline-offset: 2px;
+}
+
+/* Obsah modalu: 2 sloupce na desktopu */
+.modal-content {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 0;
+  min-height: 600px;
+  max-height: calc(92vh - 100px);
+  overflow: hidden;
+}
+
+/* Galerie */
+.modal-gallery {
+  position: relative;
+  background: linear-gradient(135deg, #f5f7f8 0%, #e9ecef 100%);
+  overflow: hidden;
+}
+
+/* Hlavní obrázek */
+.main-image {
+  position: relative;
+  height: 450px;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.main-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(1.02);
+  transition: transform 800ms cubic-bezier(.25,.46,.45,.94);
+  filter: brightness(1) saturate(1);
+}
+
+.main-image:hover img {
+  transform: scale(1.06);
+  filter: brightness(1.05) saturate(1.1);
+}
+
+/* Loading placeholder for images */
+.main-image::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(164, 214, 94, 0.1) 0%,
+    rgba(164, 214, 94, 0.2) 50%,
+    rgba(164, 214, 94, 0.1) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  z-index: -1;
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.main-image img.loaded + .main-image::before {
+  display: none;
+}
+
+/* Navigace obrázků */
+.image-navigation {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-inline: 20px;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--duration-normal) var(--ease-out);
+}
+
+.modal-gallery:hover .image-navigation {
+  opacity: 1;
+}
+
+.nav-btn {
+  pointer-events: auto;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 0;
+  background: rgba(255, 255, 255, 0.95);
+  color: #111;
+  font-size: 20px;
+  font-weight: bold;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  transition: all var(--duration-normal) var(--ease-out);
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+}
+
+.nav-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: var(--primary-green, #A4D65E);
+  transform: scale(0);
+  transition: transform var(--duration-normal) var(--ease-out);
+}
+
+.nav-btn:hover::before {
+  transform: scale(1);
+}
+
+.nav-btn:hover {
+  color: #111;
+  transform: scale(1.1);
+}
+
+.nav-btn:focus {
+  outline: 2px solid var(--primary-green);
+  outline-offset: 2px;
+}
+
+/* Seznam náhledů */
+.thumbnail-gallery {
+  display: flex;
+  gap: 12px;
+  padding: 20px;
+  overflow-x: auto;
+  background: #fff;
+  scrollbar-width: thin;
+  scrollbar-color: var(--primary-green) #f0f0f0;
+}
+
+.thumbnail-gallery::-webkit-scrollbar {
+  height: 6px;
+}
+
+.thumbnail-gallery::-webkit-scrollbar-track {
+  background: #f0f0f0;
+  border-radius: 3px;
+}
+
+.thumbnail-gallery::-webkit-scrollbar-thumb {
+  background: var(--primary-green);
+  border-radius: 3px;
+}
+
+.thumbnail {
+  display: inline-grid;
+  place-items: center;
+  width: 90px;
+  height: 68px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 2px solid transparent;
+  background: #f2f2f2;
+  transition: all var(--duration-normal) var(--ease-out);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.thumbnail img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--duration-normal) var(--ease-out);
+}
+
+.thumbnail:hover { 
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+
+.thumbnail:hover img {
+  transform: scale(1.1);
+}
+
+.thumbnail.active { 
+  border-color: var(--primary-green, #A4D65E);
+  box-shadow: 0 4px 15px rgba(164,214,94,0.3);
+}
+
+.thumbnail:focus {
+  outline: 2px solid var(--primary-green);
+  outline-offset: 2px;
+}
+
+/* Informační panel vpravo */
+.modal-info {
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  background: #fff;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--primary-green) #f0f0f0;
+}
+
+.modal-info::-webkit-scrollbar {
+  width: 6px;
+}
+
+.modal-info::-webkit-scrollbar-track {
+  background: #f0f0f0;
+  border-radius: 3px;
+}
+
+.modal-info::-webkit-scrollbar-thumb {
+  background: var(--primary-green);
+  border-radius: 3px;
+}
+
+.attraction-header h2 {
+  font-size: 1.9rem;
+  margin: 0 0 6px;
+  color: #2E2E2E;
+  line-height: 1.2;
+}
+
+.attraction-rating {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.attraction-rating .stars {
+  color: #FFD700;
+  font-size: 1.1rem;
+  display: flex;
+  gap: 2px;
+}
+
+.attraction-rating .reviews-count {
+  color: #666;
+  font-size: 0.95rem;
+}
+
+/* Cena */
+.price-section {
+  background: linear-gradient(135deg, rgba(197, 225, 165, 0.4), rgba(164, 214, 94, 0.1));
+  padding: 20px 22px;
+  border-radius: 16px;
+  border-left: 4px solid var(--primary-green, #A4D65E);
+  position: relative;
+  overflow: hidden;
+}
+
+.price-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background: linear-gradient(45deg, transparent 70%, rgba(164,214,94,0.1));
+  pointer-events: none;
+}
+
+.price-display {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  position: relative;
+  z-index: 1;
+}
+
+.price-from {
+  color: #666;
+  font-size: 0.95rem;
+}
+
+.main-price {
+  font-size: 2.4rem;
+  font-weight: 900;
+  color: var(--primary-green, #A4D65E);
+  letter-spacing: -0.02em;
+  text-shadow: 0 2px 4px rgba(164,214,94,0.2);
+}
+
+.currency {
+  color: #666;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.price-note {
+  font-size: 0.85rem;
+  color: #666;
+  margin-top: 6px;
+  position: relative;
+  z-index: 1;
+}
